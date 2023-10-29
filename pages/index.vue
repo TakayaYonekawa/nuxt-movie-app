@@ -14,9 +14,26 @@
     <div
       class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 self-center gap-x-10 gap-y-10 mb-10"
     >
-      <div v-if="data" v-for="movie in data?.results">
-        {{ movie.title }}
+      <div v-for="movie in data?.results" :key="movie.title">
+        <MovieCard :movie="movie"></MovieCard>
       </div>
+    </div>
+    <div class="flex justify-center">
+      <button
+        v-if="!disabledPrevious"
+        @click="page--"
+        class="px-4 py-2 text-m border rounded-lg"
+      >
+        Previoud
+      </button>
+      <div class="px-4 py-2 text-m border rounded-lg">{{ page }}</div>
+      <button
+        v-if="!disabledNext"
+        @click="page++"
+        class="px-4 py-2 text-m border rounded-lg"
+      >
+        Next
+      </button>
     </div>
   </div>
 </template>
@@ -25,10 +42,20 @@
 import { type APIResponse } from "~/types/APIResponse";
 
 const searchTerm = ref("");
+const page = ref(1);
+
+const disabledPrevious = computed(() => {
+  return page.value === 1;
+});
+
+const disabledNext = computed(() => {
+  return page.value + 1 === data.value?.total_pages;
+});
+
+const debouncedSearchTerm = refDebounced(searchTerm, 700);
 
 const url = computed(() => {
-  return `api/movies/search?query=${searchTerm.value}`;
-});
+  return `api/movies/search?query=${debouncedSearchTerm.value}&page=${page.value}`;});
 
 const { data } = await useFetch<APIResponse>(url);
 </script>
