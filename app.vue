@@ -1,9 +1,8 @@
 <template>
   <div>
     <NuxtLayout>
-      <NuxtPage></NuxtPage>
+      <NuxtPage keepalive include="index"></NuxtPage>
     </NuxtLayout>
   </div>
 </template>
 
-<!-- 23:09 -->
